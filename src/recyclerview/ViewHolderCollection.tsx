@@ -151,7 +151,8 @@ export const ViewHolderCollection = <TItem,>(
     marginLeft: horizontal ? getAdjustmentMargin() : undefined,
     // TODO: Temp workaround, useLayoutEffect doesn't block paint in some cases
     // We need to investigate why this is happening
-    opacity: renderId > 0 ? 1 : 0,
+    // Also check containerLayout to ensure opacity resets when component becomes visible again
+    opacity: renderId > 0 || containerLayout ? 1 : 0,
   };
 
   // sort by index and log
