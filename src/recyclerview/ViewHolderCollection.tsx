@@ -95,6 +95,7 @@ export const ViewHolderCollection = <TItem,>(
   const [renderId, setRenderId] = React.useState(0);
 
   const containerLayout = getChildContainerLayout();
+  const hasData = data && data.length > 0;
 
   const fixedContainerSize = horizontal
     ? containerLayout?.height
@@ -130,6 +131,15 @@ export const ViewHolderCollection = <TItem,>(
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [renderId]);
 
+  // Ensure commitLayout is called when containerLayout becomes available
+  // This fixes stack navigation where renderId may stay at 0
+  // Only triggers once when renderId is 0, then the condition prevents re-triggering
+  useLayoutEffect(() => {
+    if (renderId === 0 && containerLayout && hasData) {
+      viewHolderCollectionRef.current?.commitLayout();
+    }
+  }, [renderId, containerLayout, hasData, viewHolderCollectionRef]);
+
   // Expose forceUpdate through ref
   useImperativeHandle(
     viewHolderCollectionRef,
@@ -141,8 +151,6 @@ export const ViewHolderCollection = <TItem,>(
     }),
     [setRenderId]
   );
-
-  const hasData = data && data.length > 0;
 
   const containerStyle = {
     width: horizontal ? containerLayout?.width : undefined,
