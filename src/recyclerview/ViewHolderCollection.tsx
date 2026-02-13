@@ -95,6 +95,7 @@ export const ViewHolderCollection = <TItem,>(
   const [renderId, setRenderId] = React.useState(0);
 
   const containerLayout = getChildContainerLayout();
+  const hasData = data && data.length > 0;
 
   const fixedContainerSize = horizontal
     ? containerLayout?.height
@@ -130,6 +131,15 @@ export const ViewHolderCollection = <TItem,>(
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [renderId]);
 
+  // Ensure commitLayout is called when containerLayout becomes available
+  // This fixes stack navigation where renderId may stay at 0
+  useLayoutEffect(() => {
+    if (renderId === 0 && containerLayout && hasData) {
+      viewHolderCollectionRef.current?.commitLayout();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [containerLayout, hasData]);
+
   // Expose forceUpdate through ref
   useImperativeHandle(
     viewHolderCollectionRef,
@@ -142,8 +152,6 @@ export const ViewHolderCollection = <TItem,>(
     [setRenderId]
   );
 
-  const hasData = data && data.length > 0;
-
   const containerStyle = {
     width: horizontal ? containerLayout?.width : undefined,
     height: containerLayout?.height,
@@ -151,8 +159,7 @@ export const ViewHolderCollection = <TItem,>(
     marginLeft: horizontal ? getAdjustmentMargin() : undefined,
     // TODO: Temp workaround, useLayoutEffect doesn't block paint in some cases
     // We need to investigate why this is happening
-    // Check if content is ready: renderId incremented OR (layout ready AND content available)
-    opacity: renderId > 0 || (containerLayout && renderStack.size > 0) ? 1 : 0,
+    opacity: renderId > 0 ? 1 : 0,
   };
 
   // sort by index and log

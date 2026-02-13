@@ -42,11 +42,10 @@ describe("ViewHolderCollection Opacity", () => {
     jest.useFakeTimers();
   });
 
-  it("should set opacity to 1 when containerLayout and renderStack are available", () => {
-    // This test verifies that the opacity is set to 1 when both containerLayout exists
-    // and renderStack has content. This ensures the container is only visible when
-    // it actually has children to render, fixing the issue where opacity would be 1
-    // but the container was empty in stack navigation scenarios.
+  it("should automatically trigger commitLayout when containerLayout becomes available", () => {
+    // This test verifies that commitLayout is automatically called when containerLayout
+    // exists and hasData is true, ensuring renderId increments and opacity becomes 1.
+    // This fixes the stack navigation issue where renderId stays at 0.
     const result = render(
       <FlashList
         data={[0, 1, 2, 3, 4]}
@@ -55,15 +54,17 @@ describe("ViewHolderCollection Opacity", () => {
       />
     );
 
-    // The component should render items, which means opacity should be 1
+    // The component should render items, which means commitLayout was triggered
+    // and renderId was incremented, setting opacity to 1
     expect(result).toContainReactComponent(Text, { children: 0 });
     expect(result).toContainReactComponent(Text, { children: 1 });
   });
 
-  it("should render with opacity 1 on remount when layout and content are ready", () => {
+  it("should trigger commitLayout on remount in stack navigation scenarios", () => {
     // This simulates the stack navigation scenario where a component
-    // is unmounted and remounted. The fix ensures that when both layout
-    // and content (renderStack) are ready, opacity is set to 1.
+    // is unmounted and remounted. The fix ensures commitLayout is called
+    // when containerLayout becomes available, incrementing renderId and
+    // making content visible (opacity: 1).
     const { unmount } = render(
       <FlashList
         data={[0, 1, 2, 3]}
@@ -74,7 +75,7 @@ describe("ViewHolderCollection Opacity", () => {
 
     unmount();
 
-    // Remount the component
+    // Remount the component - simulates navigating back to the screen
     const result = render(
       <FlashList
         data={[0, 1, 2, 3]}
@@ -83,8 +84,8 @@ describe("ViewHolderCollection Opacity", () => {
       />
     );
 
-    // The remounted component should render items with opacity 1
-    // only when both containerLayout and renderStack are populated
+    // The remounted component should automatically trigger commitLayout
+    // when containerLayout becomes available, ensuring proper rendering
     expect(result).toContainReactComponent(Text, { children: 0 });
     expect(result).toContainReactComponent(Text, { children: 1 });
   });
