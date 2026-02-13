@@ -145,4 +145,27 @@ describe("ViewHolderCollection Opacity", () => {
     // TODO: Simulate stack pop and verify Screen A items are visible again with correct heights
     // This test documents the expected behavior for React Navigation stack scenarios
   });
+
+  it("should support prepareForScreenFocus ref method", () => {
+    // This test verifies that the prepareForScreenFocus method exists and can be called
+    // Users can call this method from React Navigation's useFocusEffect
+    const listRef = React.createRef<any>();
+
+    render(
+      <FlashList
+        ref={listRef}
+        data={[0, 1, 2, 3, 4]}
+        renderItem={({ item }) => <Text>{item}</Text>}
+        estimatedItemSize={100}
+      />
+    );
+
+    // Verify the method exists
+    expect(listRef.current?.prepareForScreenFocus).toBeDefined();
+
+    // Verify it can be called without errors
+    expect(() => {
+      listRef.current?.prepareForScreenFocus();
+    }).not.toThrow();
+  });
 });
