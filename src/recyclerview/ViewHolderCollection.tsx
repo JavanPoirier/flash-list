@@ -5,7 +5,6 @@
  */
 
 import React, { useEffect, useImperativeHandle, useLayoutEffect } from "react";
-import { InteractionManager } from "react-native";
 
 import { FlashListProps } from "../FlashListProps";
 
@@ -134,17 +133,10 @@ export const ViewHolderCollection = <TItem,>(
 
   // Ensure commitLayout is called when containerLayout becomes available
   // This fixes stack navigation where renderId may stay at 0
-  // Use InteractionManager to wait for animations (like stack transitions) to complete
+  // Only triggers once when renderId is 0, then the condition prevents re-triggering
   useLayoutEffect(() => {
     if (renderId === 0 && containerLayout && hasData) {
-      // Wait for any ongoing animations/interactions to complete before triggering layout
-      const handle = InteractionManager.runAfterInteractions(() => {
-        viewHolderCollectionRef.current?.commitLayout();
-      });
-
-      return () => {
-        handle.cancel();
-      };
+      viewHolderCollectionRef.current?.commitLayout();
     }
   }, [renderId, containerLayout, hasData, viewHolderCollectionRef]);
 

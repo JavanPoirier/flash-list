@@ -65,7 +65,7 @@ export class MultiTypeAverageWindow {
   public addValue(value: number, type: string | number): void {
     let averageWindow = this.averageWindows.get(type);
     if (!averageWindow) {
-      averageWindow = new AverageWindow(this.windowSize, this.defaultValue);
+      averageWindow = new AverageWindow(this.windowSize);
       this.averageWindows.set(type, averageWindow);
     }
     averageWindow.addValue(value);
