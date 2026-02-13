@@ -317,31 +317,4 @@ export interface FlashListRef<T> {
    * listRef.current?.clearLayoutCacheOnUpdate();
    */
   clearLayoutCacheOnUpdate: () => void;
-
-  /**
-   * Prepares the list for screen focus in React Navigation.
-   *
-   * Call this method from React Navigation's useFocusEffect to ensure items
-   * remeasure correctly when the screen becomes visible again after being hidden
-   * (e.g., when navigating back from a pushed screen in a stack navigator).
-   *
-   * This fixes the issue where FlashList items may measure with incorrect heights
-   * when screens are pushed onto a React Navigation stack and then returned to.
-   *
-   * @example
-   * import { useFocusEffect } from '@react-navigation/native';
-   *
-   * function MyScreen() {
-   *   const listRef = useRef<FlashListRef>(null);
-   *
-   *   useFocusEffect(
-   *     useCallback(() => {
-   *       listRef.current?.prepareForScreenFocus();
-   *     }, [])
-   *   );
-   *
-   *   return <FlashList ref={listRef} data={data} renderItem={renderItem} />;
-   * }
-   */
-  prepareForScreenFocus: () => void;
 }

@@ -554,15 +554,6 @@ export function useRecyclerViewController<T>(
         }
         recyclerViewManager.animationOptimizationsEnabled = true;
       },
-      /**
-       * Prepares the list for screen focus in React Navigation.
-       * Clears layout cache and forces remeasurement of all items.
-       * Call this from React Navigation's useFocusEffect to ensure items
-       * measure correctly after screen becomes visible again.
-       */
-      prepareForScreenFocus: () => {
-        recyclerViewManager.clearLayoutMeasurementCache();
-      },
     };
   }, [
     recyclerViewManager,

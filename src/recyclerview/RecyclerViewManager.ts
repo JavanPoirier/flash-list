@@ -322,19 +322,6 @@ export class RecyclerViewManager<T> {
     this._isLayoutManagerDirty = true;
   }
 
-  /**
-   * Clears the layout measurement cache for all items.
-   * This forces items to be remeasured on the next render.
-   * Useful for React Navigation scenarios where items may have been measured
-   * while the screen was hidden and need to be remeasured when visible again.
-   */
-  clearLayoutMeasurementCache() {
-    // Use the layout manager's safe method to clear measurement cache
-    this.layoutManager.clearMeasurementCache();
-    // Mark layout manager dirty to trigger recomputation
-    this.markLayoutManagerDirty();
-  }
-
   getInitialScrollIndex() {
     return (
       this.propsRef.initialScrollIndex ??
