@@ -35,7 +35,7 @@ export function ScrollAnchor({
   scrollAnchorRef,
   horizontal,
 }: ScrollAnchorProps) {
-  const [scrollOffset, setScrollOffset] = useState(1000000); // TODO: Fix this value
+  const [scrollOffset, setScrollOffset] = useState(0);
 
   // Expose scrollBy method through ref
   useImperativeHandle(
