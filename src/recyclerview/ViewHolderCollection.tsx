@@ -133,12 +133,12 @@ export const ViewHolderCollection = <TItem,>(
 
   // Ensure commitLayout is called when containerLayout becomes available
   // This fixes stack navigation where renderId may stay at 0
+  // Only triggers once when renderId is 0, then the condition prevents re-triggering
   useLayoutEffect(() => {
     if (renderId === 0 && containerLayout && hasData) {
       viewHolderCollectionRef.current?.commitLayout();
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [containerLayout, hasData]);
+  }, [renderId, containerLayout, hasData, viewHolderCollectionRef]);
 
   // Expose forceUpdate through ref
   useImperativeHandle(
