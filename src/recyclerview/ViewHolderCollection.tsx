@@ -133,28 +133,12 @@ export const ViewHolderCollection = <TItem,>(
 
   // Ensure commitLayout is called when containerLayout becomes available
   // This fixes stack navigation where renderId may stay at 0
-  // Only triggers once when renderId is 0 and layout exists
-  const hasTriggeredRef = React.useRef(false);
+  // Only triggers once when renderId is 0, then the condition prevents re-triggering
   useLayoutEffect(() => {
-    if (
-      renderId === 0 &&
-      containerLayout &&
-      hasData &&
-      !hasTriggeredRef.current
-    ) {
-      hasTriggeredRef.current = true;
+    if (renderId === 0 && containerLayout && hasData) {
       viewHolderCollectionRef.current?.commitLayout();
     }
-    // containerLayout intentionally not in deps to avoid re-triggering on value changes
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [renderId, hasData, viewHolderCollectionRef]);
-
-  // Reset trigger flag when renderId changes from 0
-  useLayoutEffect(() => {
-    if (renderId > 0) {
-      hasTriggeredRef.current = false;
-    }
-  }, [renderId]);
+  }, [renderId, containerLayout, hasData, viewHolderCollectionRef]);
 
   // Expose forceUpdate through ref
   useImperativeHandle(
