@@ -261,6 +261,21 @@ export abstract class RVLayoutManager {
   }
 
   /**
+   * Clears the measurement cache for all existing layouts.
+   * This forces items to be remeasured on the next layout pass.
+   * Safe to call even if layouts array is sparse or not fully initialized.
+   */
+  clearMeasurementCache(): void {
+    // Iterate through the actual layouts array, skipping undefined entries
+    for (const layout of this.layouts) {
+      if (layout) {
+        layout.isHeightMeasured = false;
+        layout.isWidthMeasured = false;
+      }
+    }
+  }
+
+  /**
    * Abstract method to recompute layouts for items in the given range.
    * @param startIndex Starting index of items to recompute
    * @param endIndex Ending index of items to recompute

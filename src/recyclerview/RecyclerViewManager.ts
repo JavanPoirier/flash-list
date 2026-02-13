@@ -329,18 +329,8 @@ export class RecyclerViewManager<T> {
    * while the screen was hidden and need to be remeasured when visible again.
    */
   clearLayoutMeasurementCache() {
-    const layoutCount = this.layoutManager.getLayoutCount();
-    for (let i = 0; i < layoutCount; i++) {
-      try {
-        const layout = this.layoutManager.getLayout(i);
-        if (layout) {
-          layout.isHeightMeasured = false;
-          layout.isWidthMeasured = false;
-        }
-      } catch {
-        // Layout doesn't exist yet, skip
-      }
-    }
+    // Use the layout manager's safe method to clear measurement cache
+    this.layoutManager.clearMeasurementCache();
     // Mark layout manager dirty to trigger recomputation
     this.markLayoutManagerDirty();
   }
