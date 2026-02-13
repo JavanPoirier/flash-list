@@ -135,11 +135,14 @@ export const ViewHolderCollection = <TItem,>(
 
   // Ensure commitLayout is called when containerLayout becomes available
   // This fixes stack navigation where renderId may stay at 0
-  // Using requestAnimationFrame to allow items to layout before measuring
+  // Using double requestAnimationFrame to allow items to layout before measuring
+  // Single RAF wasn't enough - items need two frames to fully layout with internal dimensions
   useLayoutEffect(() => {
     if (renderId === 0 && containerLayout && hasData) {
       requestAnimationFrame(() => {
-        viewHolderCollectionRef.current?.commitLayout();
+        requestAnimationFrame(() => {
+          viewHolderCollectionRef.current?.commitLayout();
+        });
       });
     }
   }, [
