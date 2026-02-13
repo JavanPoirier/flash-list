@@ -304,7 +304,7 @@ const RecyclerViewComponent = <T,>(
       recyclerViewManager.computeItemViewability();
 
       // Call user-provided onScroll handler
-      recyclerViewManager.props.onScroll?.(event);
+      recyclerViewManager.props?.onScroll?.(event);
     },
     [
       checkBounds,
