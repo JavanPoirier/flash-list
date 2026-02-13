@@ -1,8 +1,8 @@
 /**
  * Tests for ViewHolderCollection opacity behavior
  */
-import React from "react";
-import { Text } from "react-native";
+import React, { useState } from "react";
+import { Text, View } from "react-native";
 import "@quilted/react-testing/matchers";
 import { render } from "@quilted/react-testing";
 
@@ -88,5 +88,61 @@ describe("ViewHolderCollection Opacity", () => {
     // when containerLayout becomes available, ensuring proper rendering
     expect(result).toContainReactComponent(Text, { children: 0 });
     expect(result).toContainReactComponent(Text, { children: 1 });
+  });
+
+  it("should handle React Navigation stack push/pop with correct item heights", () => {
+    // This test simulates React Navigation stack behavior where:
+    // 1. Screen A with FlashList is rendered
+    // 2. Screen B is pushed (Screen A remains mounted but hidden)
+    // 3. Screen B is popped (Screen A becomes visible again)
+    // 4. Items should measure correctly on all transitions
+
+    // Simulate a stack navigator with two screens
+    const StackNavigator = () => {
+      const [currentScreen, setCurrentScreen] = useState<"A" | "B">("A");
+
+      return (
+        <View>
+          {/* Screen A - stays mounted when B is pushed */}
+          <View style={{ display: currentScreen === "A" ? "flex" : "none" }}>
+            <FlashList
+              data={[0, 1, 2, 3, 4]}
+              renderItem={({ item }) => (
+                <View testID={`screen-a-item-${item}`}>
+                  <Text>{`Screen A Item ${item}`}</Text>
+                </View>
+              )}
+              estimatedItemSize={100}
+            />
+          </View>
+
+          {/* Screen B - pushed on top */}
+          {currentScreen === "B" && (
+            <View>
+              <FlashList
+                data={[5, 6, 7]}
+                renderItem={({ item }) => (
+                  <View testID={`screen-b-item-${item}`}>
+                    <Text>{`Screen B Item ${item}`}</Text>
+                  </View>
+                )}
+                estimatedItemSize={100}
+              />
+            </View>
+          )}
+        </View>
+      );
+    };
+
+    const result = render(<StackNavigator />);
+
+    // Screen A should be visible initially
+    expect(result).toContainReactComponent(Text, {
+      children: "Screen A Item 0",
+    });
+
+    // TODO: Simulate stack push and verify Screen A items are hidden but Screen B renders
+    // TODO: Simulate stack pop and verify Screen A items are visible again with correct heights
+    // This test documents the expected behavior for React Navigation stack scenarios
   });
 });

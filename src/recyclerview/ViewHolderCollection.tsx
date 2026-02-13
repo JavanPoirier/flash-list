@@ -12,7 +12,6 @@ import { ViewHolder, ViewHolderProps } from "./ViewHolder";
 import { RVDimension, RVLayout } from "./layout-managers/LayoutManager";
 import { CompatView } from "./components/CompatView";
 import { useRecyclerViewContext } from "./RecyclerViewContextProvider";
-import { useUnmountAwareAnimationFrame } from "./hooks/useUnmountAwareCallbacks";
 
 /**
  * Props interface for the ViewHolderCollection component
@@ -103,7 +102,6 @@ export const ViewHolderCollection = <TItem,>(
     : containerLayout?.width;
 
   const recyclerViewContext = useRecyclerViewContext();
-  const { requestAnimationFrame } = useUnmountAwareAnimationFrame();
 
   useLayoutEffect(() => {
     if (renderId > 0) {
@@ -135,23 +133,12 @@ export const ViewHolderCollection = <TItem,>(
 
   // Ensure commitLayout is called when containerLayout becomes available
   // This fixes stack navigation where renderId may stay at 0
-  // Using double requestAnimationFrame to allow items to layout before measuring
-  // Single RAF wasn't enough - items need two frames to fully layout with internal dimensions
+  // Only triggers once when renderId is 0, then the condition prevents re-triggering
   useLayoutEffect(() => {
     if (renderId === 0 && containerLayout && hasData) {
-      requestAnimationFrame(() => {
-        requestAnimationFrame(() => {
-          viewHolderCollectionRef.current?.commitLayout();
-        });
-      });
+      viewHolderCollectionRef.current?.commitLayout();
     }
-  }, [
-    renderId,
-    containerLayout,
-    hasData,
-    viewHolderCollectionRef,
-    requestAnimationFrame,
-  ]);
+  }, [renderId, containerLayout, hasData, viewHolderCollectionRef]);
 
   // Expose forceUpdate through ref
   useImperativeHandle(
