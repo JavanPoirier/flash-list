@@ -303,20 +303,12 @@ const RecyclerViewComponent = <T,>(
       recyclerViewManager.recordInteraction();
       recyclerViewManager.computeItemViewability();
 
-      // Call user-provided onScroll handler
-      // Handle both regular functions and Reanimated worklet objects
+      // Call user-provided onScroll handler if it's a regular function
+      // Note: Reanimated worklets are objects and should NOT be invoked from JS thread.
+      // They are handled separately by Reanimated's native infrastructure.
       const userOnScroll = recyclerViewManager.props.onScroll;
-      if (userOnScroll) {
-        if (typeof userOnScroll === "function") {
-          // Regular function callback
-          userOnScroll(event);
-        } else if (typeof userOnScroll === "object") {
-          // Reanimated worklet object - invoke the worklet function
-          const worklet = (userOnScroll as any).workletEventHandler?.worklet;
-          if (typeof worklet === "function") {
-            worklet(event);
-          }
-        }
+      if (typeof userOnScroll === "function") {
+        userOnScroll(event);
       }
     },
     [
