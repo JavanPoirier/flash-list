@@ -303,10 +303,20 @@ const RecyclerViewComponent = <T,>(
       recyclerViewManager.recordInteraction();
       recyclerViewManager.computeItemViewability();
 
-      // Call user-provided onScroll handler if it's a function
-      // (React Native Reanimated may pass worklet objects instead of functions)
-      if (typeof recyclerViewManager.props.onScroll === "function") {
-        recyclerViewManager.props.onScroll(event);
+      // Call user-provided onScroll handler
+      // Handle both regular functions and Reanimated worklet objects
+      const userOnScroll = recyclerViewManager.props.onScroll;
+      if (userOnScroll) {
+        if (typeof userOnScroll === "function") {
+          // Regular function callback
+          userOnScroll(event);
+        } else if (typeof userOnScroll === "object") {
+          // Reanimated worklet object - invoke the worklet function
+          const worklet = (userOnScroll as any).workletEventHandler?.worklet;
+          if (typeof worklet === "function") {
+            worklet(event);
+          }
+        }
       }
     },
     [
