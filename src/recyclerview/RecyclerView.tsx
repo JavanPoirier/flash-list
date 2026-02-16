@@ -143,6 +143,9 @@ const RecyclerViewComponent = <T,>(
   // Initialize view holder collection ref
   const viewHolderCollectionRef = useRef<ViewHolderCollectionRef>(null);
 
+  // Track if we've warned about Reanimated worklet (warn only once)
+  const hasWarnedAboutWorkletRef = useRef(false);
+
   // Hook to handle list loading
   useOnListLoad(recyclerViewManager, onLoad);
 
@@ -309,6 +312,14 @@ const RecyclerViewComponent = <T,>(
       const userOnScroll = recyclerViewManager.props.onScroll;
       if (typeof userOnScroll === "function") {
         userOnScroll(event);
+      } else if (
+        userOnScroll &&
+        typeof userOnScroll === "object" &&
+        !hasWarnedAboutWorkletRef.current
+      ) {
+        // Warn about Reanimated worklet detection (only once)
+        hasWarnedAboutWorkletRef.current = true;
+        console.warn(WarningMessages.reanimatedWorkletPassedToOnScroll);
       }
     },
     [
