@@ -23,7 +23,7 @@ export default class ViewabilityManager<T> {
         this.createViewabilityHelper(
           rvManager.props.viewabilityConfig,
           (info) => {
-            rvManager.props?.onViewableItemsChanged?.(info);
+            rvManager.props.onViewableItemsChanged?.(info);
           }
         )
       );

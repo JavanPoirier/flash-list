@@ -350,7 +350,7 @@ export class RecyclerViewManager<T> {
 
   getDataKey(index: number): string {
     return (
-      this.propsRef?.keyExtractor?.(this.propsRef.data![index], index) ??
+      this.propsRef.keyExtractor?.(this.propsRef.data![index], index) ??
       index.toString()
     );
   }
@@ -439,7 +439,7 @@ export class RecyclerViewManager<T> {
 
   private getItemType(index: number): string {
     return (
-      this.propsRef?.getItemType?.(this.propsRef.data![index], index) ??
+      this.propsRef.getItemType?.(this.propsRef.data![index], index) ??
       "default"
     ).toString();
   }
