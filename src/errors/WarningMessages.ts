@@ -6,4 +6,8 @@ export const WarningMessages = {
   exceededMaxRendersWithoutCommit:
     "Exceeded max renders without commit. This might mean that you have duplicate keys in your keyExtractor output or your list is nested in a ScrollView causing a lot of items to render at once. " +
     "If it's none of those and is causing a real issue or error, consider reporing this on FlashList Github",
+  reanimatedWorkletPassedToOnScroll:
+    "FlashList detected a Reanimated worklet object passed to onScroll. " +
+    "This is expected behavior - Reanimated worklets are handled automatically by Reanimated's native infrastructure and do not need to be called manually. " +
+    "Your animations should work correctly. If you need a regular JS callback for onScroll, use a standard function instead of useAnimatedScrollHandler.",
 };

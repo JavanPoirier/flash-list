@@ -143,6 +143,9 @@ const RecyclerViewComponent = <T,>(
   // Initialize view holder collection ref
   const viewHolderCollectionRef = useRef<ViewHolderCollectionRef>(null);
 
+  // Track if we've warned about Reanimated worklet (warn only once)
+  const hasWarnedAboutWorkletRef = useRef(false);
+
   // Hook to handle list loading
   useOnListLoad(recyclerViewManager, onLoad);
 
@@ -303,8 +306,21 @@ const RecyclerViewComponent = <T,>(
       recyclerViewManager.recordInteraction();
       recyclerViewManager.computeItemViewability();
 
-      // Call user-provided onScroll handler
-      recyclerViewManager.props.onScroll?.(event);
+      // Call user-provided onScroll handler if it's a regular function
+      // Note: Reanimated worklets are objects and should NOT be invoked from JS thread.
+      // They are handled separately by Reanimated's native infrastructure.
+      const userOnScroll = recyclerViewManager.props.onScroll;
+      if (typeof userOnScroll === "function") {
+        userOnScroll(event);
+      } else if (
+        userOnScroll &&
+        typeof userOnScroll === "object" &&
+        !hasWarnedAboutWorkletRef.current
+      ) {
+        // Warn about Reanimated worklet detection (only once)
+        hasWarnedAboutWorkletRef.current = true;
+        console.warn(WarningMessages.reanimatedWorkletPassedToOnScroll);
+      }
     },
     [
       checkBounds,
