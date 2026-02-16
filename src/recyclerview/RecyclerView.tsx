@@ -303,8 +303,11 @@ const RecyclerViewComponent = <T,>(
       recyclerViewManager.recordInteraction();
       recyclerViewManager.computeItemViewability();
 
-      // Call user-provided onScroll handler
-      recyclerViewManager.props.onScroll?.(event);
+      // Call user-provided onScroll handler if it's a function
+      // (React Native Reanimated may pass worklet objects instead of functions)
+      if (typeof recyclerViewManager.props.onScroll === "function") {
+        recyclerViewManager.props.onScroll(event);
+      }
     },
     [
       checkBounds,
